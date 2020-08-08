@@ -7,9 +7,11 @@ import {
   Text,
   TouchableOpacity
 } from "react-native";
+import AppButton from "../component/AppButton/Button";
 function WelcomeScreen(props) {
   return (
     <ImageBackground
+      blurRadius={10}
       style={styles.background}
       source={require("../../assets/background.jpg")}
     >
@@ -21,27 +23,15 @@ function WelcomeScreen(props) {
           }}
           source={require("../../assets/logo-red.png")}
         />
-        <Text style={{ fontWeight: "500" }}>Sell what you don't need</Text>
+        <Text style={styles.tagline}>Sell what you don't need</Text>
       </View>
-      <View style={styles.loginButton}>
-        <TouchableOpacity
-          style={{
-            alignItems: "center"
-          }}
-          onPress={() => console.log("hailaa")}
-        >
-          <Text style={{ fontSize: 22, color: "#fff" }}>Login</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.registerButton}>
-        <TouchableOpacity
-          style={{
-            alignItems: "center"
-          }}
-          onPress={() => console.log("hailaa")}
-        >
-          <Text style={{ fontSize: 22, color: "#fff" }}>Sign Up</Text>
-        </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <AppButton
+          title="Login"
+          color="primary"
+          onPress={() => console.log("login has been clicked")}
+        />
+        <AppButton title="Register" color="secondary" />
       </View>
     </ImageBackground>
   );
@@ -52,6 +42,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center"
+  },
+  buttonContainer: {
+    width: "90%"
+  },
+  tagline: {
+    fontSize: 22,
+    fontWeight: "600",
+    paddingVertical: 20
   },
   loginButton: {
     width: "100%",
