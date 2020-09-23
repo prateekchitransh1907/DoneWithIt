@@ -1,48 +1,33 @@
-import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  StatusBar,
-  TouchableHighlight,
-  Dimensions
-} from "react-native";
-import {
-  useDimensions,
-  useDeviceOrientation
-} from "@react-native-community/hooks";
-import WelcomeScreen from "./app/screens/WelcomeScreen";
-import ViewImageScreen from "./app/screens/ViewImageScreen";
-import AppButton from "./app/component/AppButton/Button";
-import ListDetailsScreen from "./app/screens/ListDetailsScreen";
-import MessageScreen from "./app/screens/MessageScreen";
-export default function App() {
-  console.log("app executed");
-  console.log(Dimensions.get("screen"));
-  console.log(useDimensions()); // use to take dimensions regardless of orientation
-  //let x; //x is undefined
-  //x.toString(); // pause on exception in debugger menu to see where the error is.
-  // const { landscape } = useDeviceOrientation();
+import React, { useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import navigationTheme from "./app/navigation/navigationTheme";
+import AppNavigator from "./app/navigation/AppNavigator";
+import OfflineNotice from "./app/components/OfflineNotice";
+import AuthNavigator from "./app/navigation/AuthNavigator";
+import AuthContext from "./app/auth/context";
+import authStorage from "./app/auth/storage";
+import { AppLoading } from "expo";
 
+export default function App() {
+  const [user, setUser] = useState();
+  const [isReady, setIsReady] = useState(false);
+  const restoreUser = async () => {
+    const user = await authStorage.getUser();
+    if (user) setUser(user);
+  };
+
+  if (!isReady)
+    return (
+      <AppLoading startAsync={restoreUser} onFinish={() => setIsReady(true)} />
+    );
+
+  const navigationRef = React.createRef();
   return (
-    // <View style={styles.container}>
-    //   <AppButton title="Login" onPress={() => console.log("tapped login")} />
-    // </View>
-    <MessageScreen />
+    <AuthContext.Provider value={{ user, setUser }}>
+      <OfflineNotice />
+      <NavigationContainer ref={navigationRef} theme={navigationTheme}>
+        {user ? <AppNavigator /> : <AuthNavigator />}
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center", // aligns items in y-axis or secondary axis
-    justifyContent: "center" // align items in x-axis or primary axis
-  },
-  text: {
-    color: "red",
-    fontSize: 24,
-    fontWeight: "bold"
-  }
-});
